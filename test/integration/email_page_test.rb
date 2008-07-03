@@ -57,7 +57,13 @@ class EmailPageTest < ActionController::IntegrationTest
   end
   
   def email_page
-    %(<r:email_page:form subject="the subject"/>)
+    %(
+      <r:email_page:form subject="the subject">
+        To: <input type="text" name="to"/>
+        From: <input type="text" name="from"/>
+        <input type="submit">
+      </r:email_page:form>
+    )
   end
   
   def cool_page

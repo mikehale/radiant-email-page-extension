@@ -16,9 +16,22 @@ Add this to pages that should be emailable:
 
 Create a page titled "Email Page" with a body part like this:
 
-  <r:email_page:form />
+  <r:email_page:form>
+    To: <input type="text" name="to"/>
+    From: <input type="text" name="from"/>
+    <input type="submit">
+  </r:email_page:form>
 
 == TODO
 
 * make to, and from required fields
-* make tags easier to style
+
+== Home
+
+  http://github.com/mikehale/radiant-email-page-extension/tree/master
+
+== Credits
+
+Sponsored by Ignite Social Media LLC - http://ignitesocialmedia.com/
+
+See LICENSE for copyright and licensing details.
