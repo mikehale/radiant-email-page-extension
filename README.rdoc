@@ -1,0 +1,24 @@
+= Email Page
+
+Email pages, and keep track of how many times each page was emailed.
+
+== Installation
+
+  $ cd <radiant_app>/vendor/extensions/
+  $ git clone <email_page_git_url> email_page
+
+== Usage
+
+Add this to pages that should be emailable:
+
+<a id="email_page_link" href='<r:email_page:url/>'/>
+<div id="email_page_count"><r:email_page:count/></div>
+
+Create a page titled "Email Page" with a body part like this:
+
+<r:email_page:form />
+
+== TODO
+
+* make to, and from required fields
+* make tags easier to style
