@@ -16,6 +16,7 @@ class EmailPageExtension < Radiant::Extension
       def update_emailed_count
         self.emailed_count = self.emailed_count + 1
         self.save!
+        ResponseCache.instance.expire_response(url)
       end
     end
   end
