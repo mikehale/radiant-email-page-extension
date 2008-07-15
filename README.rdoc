@@ -11,10 +11,10 @@ Email pages, and keep track of how many times each page was emailed.
 
 Add this to pages that should be emailable:
 
-  <a id="email_page_link" href='<r:email_page:url/>'/>
+  <a id="email_page_link" href='<r:email_page:url/>'>Email This Page</a>
   <div id="email_page_count"><r:email_page:count/></div>
 
-Create a page titled "Email Page" with a body part like this:
+Create a page of type Email with a body part like this:
 
   <r:email_page:form>
     To: <input type="text" name="to"/>
@@ -25,6 +25,7 @@ Create a page titled "Email Page" with a body part like this:
 == TODO
 
 * make to, and from required fields
+* display friendly error message if there is no page of type Email
 
 == Home
 

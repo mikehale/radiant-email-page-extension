@@ -4,15 +4,17 @@ class EmailPageTest < ActionController::IntegrationTest
   def setup
     @home = Page.create!(:title => 'Home', :slug => '/', :breadcrumb => 'home', :status => Status[:published])
     @page_to_email = Page.create!(:title => 'Cool Page', :slug => 'cool', :breadcrumb => 'cool', :status => Status[:published], :parent => @home)
-    @emailpage = Page.create!(:title => 'Email Page', :slug => 'email', :breadcrumb => 'email', :status => Status[:published], :parent => @home)
-
     PagePart.create!(:name => 'body', :page => @page_to_email, :content => cool_page)
-    PagePart.create!(:name => 'body', :page => @emailpage, :content => email_page)
+    @url = "/pages/#{@page_to_email.id}/email_page"
+
+    # emailpage = Page.create!(:title => 'Email', :slug => 'email', :breadcrumb => 'email', :status => Status[:published], :parent => @home, :class_name => "EmailPage")
+    emailpage = Page.create!(:title => 'Email', :slug => 'email', :breadcrumb => 'email', :status => Status[:published], :parent => @home)
+    PagePart.create!(:name => 'body', :page => emailpage, :content => email_page)
   end
   
   def test_link
     get '/cool'
-    assert_select "a[href=/pages/#{@page_to_email.id}/email_page]"
+    assert_select "a[href=#{@url}]", "email this page"
   end
   
   def test_count
@@ -23,10 +25,13 @@ class EmailPageTest < ActionController::IntegrationTest
   end
   
   def test_form
-    get '/email'
+    get @url
+    #view_in_browser(html_document.root)
     assert_select "input[name=to]"
     assert_select "input[name=from]"
     assert_select "input[name=subject][value=the subject]"
+    assert_select "form[method=post]"
+    assert_select "form[action=#{@url}]"
   end
   
   def test_sends_email
@@ -68,7 +73,7 @@ class EmailPageTest < ActionController::IntegrationTest
   
   def cool_page
     %(
-      <a id="email_page_link" href='<r:email_page:url/>'/>
+      <a id="email_page_link" href='<r:email_page:url/>'>email this page</a>
       <div id="count"><r:email_page:count/></div>
     )
   end

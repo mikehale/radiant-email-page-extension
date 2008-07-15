@@ -8,11 +8,11 @@ class EmailPageExtension < Radiant::Extension
   end
   
   def activate
+    EmailPage
     Page.send :include, EmailPageTags
     
-    Page.class_eval do
+    Page.class_eval do      
       attr_accessor :page_id_to_email
-      
       def update_emailed_count
         Page.increment_counter("emailed_count", id)
         ResponseCache.instance.expire_response(url)
