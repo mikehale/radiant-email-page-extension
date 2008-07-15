@@ -26,6 +26,7 @@ Create a page of type Email with a body part like this:
 
 * make to, and from required fields
 * display friendly error message if there is no page of type Email
+* handle finding multiple "Email" type pages
 
 == Home
 

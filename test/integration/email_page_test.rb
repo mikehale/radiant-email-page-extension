@@ -7,8 +7,7 @@ class EmailPageTest < ActionController::IntegrationTest
     PagePart.create!(:name => 'body', :page => @page_to_email, :content => cool_page)
     @url = "/pages/#{@page_to_email.id}/email_page"
 
-    # emailpage = Page.create!(:title => 'Email', :slug => 'email', :breadcrumb => 'email', :status => Status[:published], :parent => @home, :class_name => "EmailPage")
-    emailpage = Page.create!(:title => 'Email', :slug => 'email', :breadcrumb => 'email', :status => Status[:published], :parent => @home)
+    emailpage = Page.create!(:title => 'Email', :slug => 'email', :breadcrumb => 'email', :status => Status[:published], :parent => @home, :class_name => "EmailPage")
     PagePart.create!(:name => 'body', :page => emailpage, :content => email_page)
   end
   
@@ -26,7 +25,6 @@ class EmailPageTest < ActionController::IntegrationTest
   
   def test_form
     get @url
-    #view_in_browser(html_document.root)
     assert_select "input[name=to]"
     assert_select "input[name=from]"
     assert_select "input[name=subject][value=the subject]"
