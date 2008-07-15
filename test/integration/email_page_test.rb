@@ -2,13 +2,29 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class EmailPageTest < ActionController::IntegrationTest
   def setup
-    @home = Page.create!(:title => 'Home', :slug => '/', :breadcrumb => 'home', :status => Status[:published])
-    @page_to_email = Page.create!(:title => 'Cool Page', :slug => 'cool', :breadcrumb => 'cool', :status => Status[:published], :parent => @home)
+    @home = Page.create!(:title => 'Home', 
+                         :slug => '/', 
+                         :breadcrumb => 'home', 
+                         :status => Status[:published])
+                         
+    @page_to_email = Page.create!(:title => 'Cool Page',
+                                  :slug => 'cool', 
+                                  :breadcrumb => 'cool', 
+                                  :status => Status[:published], 
+                                  :parent => @home)
+                                  
     PagePart.create!(:name => 'body', :page => @page_to_email, :content => cool_page)
+                     
     @url = "/pages/#{@page_to_email.id}/email_page"
 
-    emailpage = Page.create!(:title => 'Email', :slug => 'email', :breadcrumb => 'email', :status => Status[:published], :parent => @home, :class_name => "EmailPage")
-    PagePart.create!(:name => 'body', :page => emailpage, :content => email_page)
+    @emailpage = Page.create!(:title => 'Email', 
+                             :slug => 'email', 
+                             :breadcrumb => 'email', 
+                             :status => Status[:published], 
+                             :parent => @home, 
+                             :class_name => "EmailPage")
+                             
+    # PagePart.create!(:name => 'body', :page => @emailpage, :content => email_page_with_subject)
   end
   
   def test_link
@@ -24,6 +40,19 @@ class EmailPageTest < ActionController::IntegrationTest
   end
   
   def test_form
+    PagePart.create!(:name => 'body', :page => @emailpage, :content => email_page)
+    
+    get @url
+    assert_select "input[name=to]"
+    assert_select "input[name=from]"
+    assert_select "input[name=subject]", false
+    assert_select "form[method=post]"
+    assert_select "form[action=#{@url}]"
+  end
+  
+  def test_form_with_subject
+    PagePart.create!(:name => 'body', :page => @emailpage, :content => email_page_with_subject)
+
     get @url
     assert_select "input[name=to]"
     assert_select "input[name=from]"
@@ -38,10 +67,10 @@ class EmailPageTest < ActionController::IntegrationTest
     
     post "/pages/#{@page_to_email.id}/email_page", :to => to, :from => from, :subject => 'the subject'
     @page_to_email.reload
-    assert_equal 1, ActionMailer::Base.deliveries.size
+    assert 1, ActionMailer::Base.deliveries.size
     assert_equal 1, @page_to_email.emailed_count
 
-    email = ActionMailer::Base.deliveries[0]
+    email = ActionMailer::Base.deliveries.pop
     full_url = "#{request.protocol}#{request.domain}#{@page_to_email.url}"
     
     assert_equal "the subject", email.subject
@@ -50,7 +79,7 @@ class EmailPageTest < ActionController::IntegrationTest
     assert_equal %(#{from} enjoyed reading this page #{full_url} and thinks you might too.), email.body
     assert_redirected_to @page_to_email.url
   end
-  
+    
   #view_in_browser(html_document.root)
   def view_in_browser(html)
     File.open('/tmp/integration.html', File::TRUNC|File::CREAT|File::RDWR) do |f|
@@ -60,6 +89,16 @@ class EmailPageTest < ActionController::IntegrationTest
   end
   
   def email_page
+    %(
+      <r:email_page:form>
+        To: <input type="text" name="to"/>
+        From: <input type="text" name="from"/>
+        <input type="submit">
+      </r:email_page:form>
+    )
+  end
+
+  def email_page_with_subject
     %(
       <r:email_page:form subject="the subject">
         To: <input type="text" name="to"/>

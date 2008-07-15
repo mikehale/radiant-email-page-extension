@@ -11,10 +11,12 @@ module EmailPageTags
   
   tag 'email_page:form' do |tag|
     subject = tag.attr["subject"]
-    %(<form id='email_page_form' action="/pages/#{tag.locals.page.page_id_to_email}/email_page" method='post'>
-        <input type="hidden" name="subject" value="#{subject}"/>
-        #{tag.expand}
-      </form>)
+    result = []
+    result << %(<form id='email_page_form' action="/pages/#{tag.locals.page.page_id_to_email}/email_page" method='post'>)
+    result <<   %(<input type="hidden" name="subject" value="#{subject}"/>") unless subject.nil? || subject.empty?
+    result <<   tag.expand
+    result << %(</form>)
+    result
   end
 
   tag 'email_page:url' do |tag|

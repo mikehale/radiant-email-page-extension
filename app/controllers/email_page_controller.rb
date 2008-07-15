@@ -34,7 +34,7 @@ class Mail
   def send
     to = @params[:to]
     from = @params[:from]
-    subject = @params[:subject] || "Recommendation"
+    subject = @params[:subject] || "Recomendation"
     
     Mailer.deliver_generic_mail(
       :recipients => to,
