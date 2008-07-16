@@ -1,3 +1,4 @@
+require 'ruby-debug'
 class EmailPageController < ApplicationController
   session :off
   no_login_required
