@@ -16,9 +16,28 @@ Add this to pages that should be emailable:
 
 Create a page of type Email with a body part like this:
 
-  <r:email_page:form>
-    To: <input type="text" name="to"/>
-    From: <input type="text" name="from"/>
+  <r:email_page:form [subject="Recommendation"]>
+    <r:success>
+      <div>Thank you for sharing a page!</div>
+    </r:success>
+    <r:error>
+      <div id="email_page_errors">
+        <h4>Please correct the errors below.</h4>
+        <ul>
+          <r:error on="from"><li>Your email address <r:message /></li></r:error>
+          <r:error on="recipients"><li>The recipient email address <r:message /></li></r:error>
+        </ul>
+      </div>
+    </r:error>
+  
+    <div class="field<r:error on="from"> error</r:error>">
+      <label for="from">From:</label>
+      <input type="text" name="from"/>
+    </div>
+    <div class="field<r:error on="recipients"> error</r:error>">
+      <label for="recipients">Recipients:</label>
+      <input type="text" name="recipients"/>
+    </div>
     <input type="submit">
   </r:email_page:form>
   
@@ -41,5 +60,6 @@ Optionally customize the email with an email part like this:
 == Credits
 
 Sponsored by Ignite Social Media LLC - http://ignitesocialmedia.com/
+Heavily influenced by Mailer Extension for Radiant (there is probably a way to refactor this extension to make use of it).
 
 See LICENSE for copyright and licensing details.

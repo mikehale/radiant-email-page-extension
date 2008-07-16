@@ -1,11 +1,16 @@
 class EmailPageMail
-  attr_reader :page, :data
+  attr_reader :page, :data, :errors
   def initialize(page, data, request)
     @page, @data, @request = page, data, request
+    @errors = {}
   end
   
   def from
     data[:from]
+  end
+  
+  def recipients
+    data[:recipients]
   end
   
   def page_to_email
@@ -16,19 +21,37 @@ class EmailPageMail
     "#{@request.protocol}#{@request.host}#{page_to_email.url}"
   end
   
+  def valid?
+    valid = true
+    
+    if from.blank?
+      valid = false
+      errors['from'] = "is required"
+    end
+    
+    if recipients.blank?
+      valid = false
+      errors['recipients'] = "is required"
+    end
+    
+    valid
+  end
+  
   def send
-    to = @data[:to]
+    return false if not valid?
+    
     subject = @data[:subject] || "Recomendation"
     body = page.part(:email) ? page.render_part(:email) : default_body
     
-    EmailPageMailer.deliver_generic_mail(
-      :recipients => to,
+    result = EmailPageMailer.deliver_generic_mail(
+      :recipients => recipients,
       :from => from,
       :subject => subject,
       :headers => { 'Reply-To' => from },
       :body => body
     )
     page_to_email.update_emailed_count
+    result
   end
   
   protected

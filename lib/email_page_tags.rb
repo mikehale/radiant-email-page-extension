@@ -18,6 +18,17 @@ module EmailPageTags
     result << %(</form>)
     result
   end
+  
+  desc %{
+    Outputs a bit of javascript that will cause the enclosed content
+    to be displayed when mail is successfully sent.}
+  tag "email_page:form:success" do |tag|
+    results = [%(<div id="mail_sent" style="display:none">)]
+    results << tag.expand
+    results << %(</div>)
+    results << %(<script type="text/javascript">if($ && location.hash == '#mail_sent'){$('mail_sent').show();}</script>)
+    results
+  end  
 
   tag 'email_page:url' do |tag|
     %(/pages/#{tag.locals.page.id}/email_page)
@@ -30,4 +41,31 @@ module EmailPageTags
   tag 'email_page:from' do |tag|
     tag.locals.page.last_mail.from
   end
+  
+  desc %{
+    Will expand if and only if there is an error with the last mail.
+
+    If you specify the "on" attribute, it will only expand if there
+    is an error on the named attribute, and will make the error
+    message available to the mailer:error:message tag.}
+  tag "email_page:error" do |tag|
+    if mail = tag.locals.page.last_mail
+      if on = tag.attr['on']
+        if error = mail.errors[on]
+          tag.locals.error_message = error
+          tag.expand
+        end
+      else
+        if !mail.valid?
+          tag.expand
+        end
+      end
+    end
+  end
+
+  desc %{Outputs the error message.}
+  tag "email_page:error:message" do |tag|
+    tag.locals.error_message
+  end
+  
 end

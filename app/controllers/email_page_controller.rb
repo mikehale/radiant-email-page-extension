@@ -15,7 +15,11 @@ class EmailPageController < ApplicationController
     mail = EmailPageMail.new(email_page, params, request)
     email_page.last_mail = mail
     
-    mail.send
-    redirect_to mail.page_to_email.url
-  end    
+    if mail.send
+      redirect_to "#{mail.page_to_email.url}#mail_sent"
+    else
+      email_page.request, email_page.response = request, response
+      render :text => email_page.render
+    end
+  end
 end
