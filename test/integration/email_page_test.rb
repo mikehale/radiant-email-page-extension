@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../test_helper'
+require 'ruby-debug'
 
 class EmailPageTest < ActionController::IntegrationTest
   def setup
@@ -15,16 +16,15 @@ class EmailPageTest < ActionController::IntegrationTest
                                   
     PagePart.create!(:name => 'body', :page => @page_to_email, :content => cool_page)
                      
-    @url = "/pages/#{@page_to_email.id}/email_page"
-
     @emailpage = Page.create!(:title => 'Email', 
                              :slug => 'email', 
                              :breadcrumb => 'email', 
                              :status => Status[:published], 
                              :parent => @home, 
-                             :class_name => "EmailPage")
-                             
-    # PagePart.create!(:name => 'body', :page => @emailpage, :content => email_page_with_subject)
+                             :class_name => "EmailPage")                             
+
+    @url = "/pages/#{@page_to_email.id}/email_page"
+    @full_url = "http://www.example.com#{@page_to_email.url}"
   end
   
   def test_link
@@ -61,23 +61,40 @@ class EmailPageTest < ActionController::IntegrationTest
     assert_select "form[action=#{@url}]"
   end
   
+  def test_email_tags
+    PagePart.create!(:name => 'email', :page => @emailpage, :content => email_part)
+
+    from = "from@example.com"
+    to = ["to@example.com"]
+    send_mail(to, from)
+    email = ActionMailer::Base.deliveries.pop
+
+    assert email.body.include?(from)
+    assert email.body.include?(@full_url)
+  end
+  
   def test_sends_email
-    from = "fred@us.com"
-    to = ["bob@us.com"]
-    
-    post "/pages/#{@page_to_email.id}/email_page", :to => to, :from => from, :subject => 'the subject'
+    from = "from@example.com"
+    to = ["to@example.com"]
+    subject = 'the subject'
+    send_mail(to, from, subject)
     @page_to_email.reload
+    
     assert 1, ActionMailer::Base.deliveries.size
     assert_equal 1, @page_to_email.emailed_count
 
     email = ActionMailer::Base.deliveries.pop
-    full_url = "http://www.example.com#{@page_to_email.url}"
     
-    assert_equal "the subject", email.subject
+    assert_equal subject, email.subject
     assert_equal to, email.to
     assert_equal from, email.from.first
-    assert_equal %(#{from} enjoyed reading this page #{full_url} and thinks you might too.), email.body
+    assert email.body.include?(from)
+    assert email.body.include?(@full_url)
     assert_redirected_to @page_to_email.url
+  end
+  
+  def send_mail(to=["to@example.com"], from="from@example.com", subject=nil)
+    post "/pages/#{@page_to_email.id}/email_page", :to => to, :from => from, :subject => subject    
   end
     
   #view_in_browser(html_document.root)
@@ -86,6 +103,14 @@ class EmailPageTest < ActionController::IntegrationTest
       f.write html
       `open #{f.path}`
     end    
+  end
+  
+  def email_part
+    %(
+      <r:email_page>
+      <r:from/> thinks <r:page_url/> is an awesome read.
+      </r:email_page>
+    )
   end
   
   def email_page

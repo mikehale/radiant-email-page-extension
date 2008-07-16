@@ -23,4 +23,11 @@ module EmailPageTags
     %(/pages/#{tag.locals.page.id}/email_page)
   end
   
+  tag 'email_page:page_url' do |tag|
+    tag.locals.page.last_mail.page_to_email_url
+  end
+  
+  tag 'email_page:from' do |tag|
+    tag.locals.page.last_mail.from
+  end
 end

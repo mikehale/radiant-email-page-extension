@@ -21,6 +21,12 @@ Create a page of type Email with a body part like this:
     From: <input type="text" name="from"/>
     <input type="submit">
   </r:email_page:form>
+  
+Optionally customize the email with an email part like this:
+
+  <r:email_page>
+  <r:from/> enjoyed reading this page <r:page_url/> and thinks you might too.
+  </r:email_page>
 
 == TODO
 

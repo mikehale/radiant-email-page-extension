@@ -11,37 +11,51 @@ class EmailPageController < ApplicationController
   end
   
   def create
-    page_to_email = Page.find(params[:page_id])
-    Mail.new(params, full_url(page_to_email)).send
-    page_to_email.update_emailed_count
-    redirect_to page_to_email.url
-  end
-  
-  private
-  
-  def full_url(page)
-    "#{request.protocol}#{request.host}#{page.url}"
-  end
-  
+    email_page = Page.find_by_class_name("EmailPage")
+    mail = Mail.new(email_page, params, request)
+    email_page.last_mail = mail
+    
+    mail.send
+    redirect_to mail.page_to_email.url
+  end    
 end
 
 class Mail
-  def initialize(params, page_url)
-    @params = params
-    @page_url = page_url
+  attr_reader :page, :data
+  def initialize(page, data, request)
+    @page, @data, @request = page, data, request
+  end
+  
+  def from
+    data[:from]
+  end
+  
+  def page_to_email
+    Page.find(@data[:page_id])
+  end
+  
+  def page_to_email_url
+    "#{@request.protocol}#{@request.host}#{page_to_email.url}"
   end
   
   def send
-    to = @params[:to]
-    from = @params[:from]
-    subject = @params[:subject] || "Recomendation"
+    to = @data[:to]
+    subject = @data[:subject] || "Recomendation"
+    plain_body = page.part(:email) ? page.render_part(:email) : default_body
     
     Mailer.deliver_generic_mail(
       :recipients => to,
       :from => from,
       :subject => subject,
       :headers => { 'Reply-To' => from },
-      :plain_body => %(#{from} enjoyed reading this page #{@page_url} and thinks you might too.)
-    )    
+      :plain_body => plain_body
+    )
+    page_to_email.update_emailed_count
   end
+  
+  protected
+  
+    def default_body
+      %(#{from} enjoyed reading this page #{page_to_email_url} and thinks you might too.)
+    end  
 end
