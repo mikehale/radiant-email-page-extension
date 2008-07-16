@@ -14,9 +14,8 @@ class EmailPageController < ApplicationController
     email_page = Page.find_by_class_name("EmailPage")
     mail = EmailPageMail.new(email_page, params, request)
     email_page.last_mail = mail
-    
     if mail.send
-      redirect_to "#{mail.page_to_email.url}#mail_sent"
+      redirect_to "#{mail.page_to_email.url}"
     else
       email_page.request, email_page.response = request, response
       render :text => email_page.render

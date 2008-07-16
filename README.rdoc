@@ -17,9 +17,6 @@ Add this to pages that should be emailable:
 Create a page of type Email with a body part like this:
 
   <r:email_page:form [subject="Recommendation"]>
-    <r:success>
-      <div>Thank you for sharing a page!</div>
-    </r:success>
     <r:error>
       <div id="email_page_errors">
         <h4>Please correct the errors below.</h4>

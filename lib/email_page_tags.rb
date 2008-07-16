@@ -19,17 +19,6 @@ module EmailPageTags
     result
   end
   
-  desc %{
-    Outputs a bit of javascript that will cause the enclosed content
-    to be displayed when mail is successfully sent.}
-  tag "email_page:form:success" do |tag|
-    results = [%(<div id="mail_sent" style="display:none">)]
-    results << tag.expand
-    results << %(</div>)
-    results << %(<script type="text/javascript">if($ && location.hash == '#mail_sent'){$('mail_sent').show();}</script>)
-    results
-  end  
-
   tag 'email_page:url' do |tag|
     %(/pages/#{tag.locals.page.id}/email_page)
   end
