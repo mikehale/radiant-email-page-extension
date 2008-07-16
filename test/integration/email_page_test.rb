@@ -71,7 +71,7 @@ class EmailPageTest < ActionController::IntegrationTest
     assert_equal 1, @page_to_email.emailed_count
 
     email = ActionMailer::Base.deliveries.pop
-    full_url = "#{request.protocol}#{request.domain}#{@page_to_email.url}"
+    full_url = "http://www.example.com#{@page_to_email.url}"
     
     assert_equal "the subject", email.subject
     assert_equal to, email.to

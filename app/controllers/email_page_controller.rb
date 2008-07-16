@@ -20,7 +20,7 @@ class EmailPageController < ApplicationController
   private
   
   def full_url(page)
-    "#{request.protocol}#{request.domain}#{page.url}"
+    "#{request.protocol}#{request.host}#{page.url}"
   end
   
 end
