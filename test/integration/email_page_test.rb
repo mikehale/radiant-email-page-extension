@@ -102,7 +102,7 @@ class EmailPageTest < ActionController::IntegrationTest
     assert_equal from, email.from.first
     assert email.body.include?(from)
     assert email.body.include?(@full_url)
-    assert_redirected_to "#{@page_to_email.url}#mail_sent"
+    assert_redirected_to @page_to_email.url
   end
   
   def send_mail(recipients=["to@example.com"], from="from@example.com", subject=nil)
@@ -134,9 +134,6 @@ class EmailPageTest < ActionController::IntegrationTest
     end 
     
     result << %(
-        <r:success>
-          <div>Thank you for sharing a page!</div>
-        </r:success>
         <r:error>
           <div id="email_page_errors">
             <h4>Please correct the errors below.</h4>
