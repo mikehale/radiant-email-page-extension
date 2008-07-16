@@ -60,6 +60,8 @@ class EmailPageTest < ActionController::IntegrationTest
     assert_select("#email_page_errors") {
       assert_select "li", 2
     }
+
+    assert_select "form[action=#{@url}]"
   end
   
   def test_form_with_subject
