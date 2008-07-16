@@ -56,7 +56,6 @@ class EmailPageTest < ActionController::IntegrationTest
     
     assert 0, ActionMailer::Base.deliveries.size
     assert_equal 0, @page_to_email.emailed_count
-    view_in_browser(html_document.root)
     assert_response :success
     assert_select("#email_page_errors") {
       assert_select "li", 2
