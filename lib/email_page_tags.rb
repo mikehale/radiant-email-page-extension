@@ -13,10 +13,17 @@ module EmailPageTags
     subject = tag.attr["subject"]
     result = []
     result << %(<form id='email_page_form' action="/pages/#{tag.locals.page.page_id_to_email}/email_page" method='post'>)
-    result <<   %(<input type="hidden" name="subject" value="#{subject}"/>") unless subject.nil? || subject.empty?
+    result <<   %(<input type="hidden" name="subject" value="#{subject}"/>) unless subject.nil? || subject.empty?
     result <<   tag.expand
     result << %(</form>)
     result
+  end
+  
+  desc %{Renders a text input tag for a mailer form. The 'name' attribute is required.}
+  tag "email_page:text" do |tag|
+    raise_error_if_name_missing "mailer:text", tag.attr
+    value = (prior_value(tag) || tag.attr['value'])
+    %(<input type="text" value="#{value}" name="#{tag.attr["name"]}"/>)
   end
   
   tag 'email_page:url' do |tag|
@@ -57,4 +64,16 @@ module EmailPageTags
     tag.locals.error_message
   end
   
+  def raise_error_if_name_missing(tag_name, tag_attr)
+    raise "`#{tag_name}' tag requires a `name' attribute" if tag_attr['name'].blank?
+  end
+  
+  def prior_value(tag, tag_name=tag.attr['name'])
+    if mail = tag.locals.page.last_mail
+      mail.data[tag_name]
+    else
+      nil
+    end
+  end  
+    
 end

@@ -148,11 +148,11 @@ class EmailPageTest < ActionController::IntegrationTest
 
         <div class="field<r:error on="from"> error</r:error>">
           <label for="from">From:</label>
-          <input type="text" name="from"/>
+          <r:text name="from"/>
         </div>
         <div class="field<r:error on="recipients"> error</r:error>">
           <label for="recipients">Recipients:</label>
-          <input type="text" name="recipients"/>
+          <r:text name="recipients"/>
         </div>
         <input type="submit">
       </r:email_page:form>
