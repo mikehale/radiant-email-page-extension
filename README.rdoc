@@ -46,7 +46,6 @@ Optionally customize the email with an email part like this:
 
 == TODO
 
-* make to, and from required fields
 * display friendly error message if there is no page of type Email
 * handle finding multiple "Email" type pages
 
