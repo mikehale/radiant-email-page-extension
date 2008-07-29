@@ -27,6 +27,8 @@ Create a page of type Email with a body part like this:
       </div>
     </r:error>
   
+    <h3><r:page_title/></h3>
+    
     <div class="field<r:error on="from"> error</r:error>">
       <label for="from">From:</label>
       <r:text name="from"/>

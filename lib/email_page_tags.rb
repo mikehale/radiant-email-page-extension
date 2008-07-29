@@ -58,6 +58,10 @@ module EmailPageTags
       end
     end
   end
+  
+  tag "email_page:page_title" do |tag|
+    Page.find(tag.locals.page.page_id_to_email).title
+  end
 
   desc %{Outputs the error message.}
   tag "email_page:error:message" do |tag|

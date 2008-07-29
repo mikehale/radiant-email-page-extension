@@ -42,6 +42,7 @@ class EmailPageTest < ActionController::IntegrationTest
   def test_form
     PagePart.create!(:name => 'body', :page => @emailpage, :content => email_page)
     get @url
+    assert_select "h3", @page_to_email.title    
     assert_select "input[name=recipients]"
     assert_select "input[name=from]"
     assert_select "input[name=subject]", false
@@ -146,6 +147,8 @@ class EmailPageTest < ActionController::IntegrationTest
           </div>
         </r:error>
 
+        <h3><r:page_title/></h3>
+        
         <div class="field<r:error on="from"> error</r:error>">
           <label for="from">From:</label>
           <r:text name="from"/>
