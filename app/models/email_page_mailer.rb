@@ -7,7 +7,12 @@ class EmailPageMailer < ActionMailer::Base
     @subject = options[:subject] || ""
     @headers = options[:headers] || {}
     @charset = options[:charset] || "utf-8"
-    @content_type = "text/plain"
-    @body = options[:body] || ""
+    @content_type = "multipart/alternative"
+    if options.has_key? :plain_body
+      part :content_type => "text/plain", :body => (options[:plain_body] || "")
+    end
+    if options.has_key? :html_body and !options[:html_body].blank?
+      part :content_type => "text/html", :body => (options[:html_body] || "")
+    end
   end
 end
