@@ -31,7 +31,17 @@ class EmailPageMail
     
     if recipients.blank?
       valid = false
-      errors['recipients'] = "is required"
+      errors['recipients'] = "are required"
+    end
+
+    if !valid_email?(recipients.split(/,/))
+      errors['recipients'] = 'are invalid'
+      valid = false
+    end
+        
+    if !valid_email?(from)
+      errors['from'] = 'is invalid'
+      valid = false
     end
     
     valid
@@ -56,6 +66,13 @@ class EmailPageMail
   end
   
   protected
+    def valid_email?(email)
+      if email.is_a? String
+        (email.blank? ? true : email =~ /@.+\./)
+      elsif email.is_a? Array
+        email.collect{|e| e.strip}.all?{|e| valid_email?(e) }
+      end
+    end
   
     def default_body
       %(#{from} enjoyed reading this page #{page_to_email_url} and thinks you might too.)

@@ -43,7 +43,7 @@ module EmailPageTags
 
     If you specify the "on" attribute, it will only expand if there
     is an error on the named attribute, and will make the error
-    message available to the mailer:error:message tag.}
+    message available to the email_page:error:message tag.}
   tag "email_page:error" do |tag|
     if mail = tag.locals.page.last_mail
       if on = tag.attr['on']
