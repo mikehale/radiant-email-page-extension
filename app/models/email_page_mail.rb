@@ -68,7 +68,7 @@ class EmailPageMail
   protected
     def valid_email?(email)
       if email.is_a? String
-        (email.blank? ? true : email =~ /@.+\./)
+        (email.blank? ? true : email =~ /.@.+\../)
       elsif email.is_a? Array
         email.collect{|e| e.strip}.all?{|e| valid_email?(e) }
       end
