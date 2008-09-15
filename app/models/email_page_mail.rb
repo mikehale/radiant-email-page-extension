@@ -6,11 +6,11 @@ class EmailPageMail
   end
   
   def from
-    data[:from]
+    @data[:from].strip
   end
   
   def recipients
-    data[:recipients]
+    @data[:recipients].split(/,/).collect{|e| e.strip }.find_all{|e| !e.blank? }
   end
   
   def page_to_email
@@ -34,7 +34,7 @@ class EmailPageMail
       errors['recipients'] = "are required"
     end
 
-    if !valid_email?(recipients.split(/,/))
+    if !valid_email?(recipients)
       errors['recipients'] = 'are invalid'
       valid = false
     end

@@ -80,7 +80,7 @@ class EmailPageTest < ActionController::IntegrationTest
     PagePart.create!(:name => 'email', :page => @emailpage, :content => email_part)
 
     from = "from@example.com"
-    to = ["to@example.com"]
+    to = "to@example.com"
     send_mail(to, from)
     email = ActionMailer::Base.deliveries.pop
 
@@ -90,36 +90,27 @@ class EmailPageTest < ActionController::IntegrationTest
   
   def test_sends_email
     from = "from@example.com"
-    to = ["to@example.com"]
+    to = "to@example.com , "
     subject = 'the subject'
     send_mail(to, from, subject)
     @page_to_email.reload
     
-    assert 1, ActionMailer::Base.deliveries.size
+    assert_equal 1, ActionMailer::Base.deliveries.size
     assert_equal 1, @page_to_email.emailed_count
 
     email = ActionMailer::Base.deliveries.pop
-    
     assert_equal subject, email.subject
-    assert_equal to, email.to
+    assert_equal ["to@example.com"], email.to
     assert_equal from, email.from.first
     assert email.body.include?(from)
     assert email.body.include?(@full_url)
     assert_redirected_to @page_to_email.url
   end
   
-  def send_mail(recipients=["to@example.com"], from="from@example.com", subject=nil)
+  def send_mail(recipients="to@example.com", from="from@example.com", subject=nil)
     post "/pages/#{@page_to_email.id}/email_page", :recipients => recipients, :from => from, :subject => subject
   end
-    
-  #view_in_browser(html_document.root)
-  def view_in_browser(html)
-    File.open('/tmp/integration.html', File::TRUNC|File::CREAT|File::RDWR) do |f|
-      f.write html
-      `open #{f.path}`
-    end    
-  end
-  
+      
   def email_part
     %(
       <r:email_page>
