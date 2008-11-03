@@ -53,11 +53,12 @@ class EmailPageMail
     plain_body = page.part(:email) ? page.render_part(:email) : default_body
     html_body = page.render_part(:email_html) || nil
     
+    sender = 'no-reply@sam-e.com'
     result = EmailPageMailer.deliver_generic_mail(
       :recipients => recipients,
       :from => from,
       :subject => subject,
-      :headers => { 'Reply-To' => from },
+      :headers => { 'Sender' => sender, 'Return-Path' => sender },
       :plain_body => plain_body,
       :html_body => html_body
     )
