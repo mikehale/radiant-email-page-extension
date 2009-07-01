@@ -14,7 +14,7 @@ class EmailPageExtension < Radiant::Extension
     Page.class_eval do
       def update_emailed_count
         Page.increment_counter("emailed_count", id)
-        clear_cache
+        Radiant::Cache.clear
       end
     end
   end
